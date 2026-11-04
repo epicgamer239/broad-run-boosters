@@ -1,0 +1,52 @@
+# Booster Club source documents / mockups (not for public distribution)
+reference/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.code-workspace
+
+# Logs / temp
+*.log
+*.tmp
+*.temp
+*.bak
+*.old
+*.orig
+
+# Environment / secrets / local config
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+secrets.json
+auth.json
+wp-config.php
+wp-config-*.php
+
+# Node / build artifacts (if added later)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.dist/
+dist/
+build/
+.cache/
+
+# Composer
+/vendor/
+
+# Local / tooling
+.local/
+*.local
+.phpunit.result.cache
+coverage/

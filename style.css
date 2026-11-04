@@ -1,0 +1,17 @@
+/*
+Theme Name: Broad Run Athletic Boosters
+Theme URI: https://broadrunathleticboosters.org
+Author: Broad Run Athletic Booster Club
+Author URI: https://broadrunathleticboosters.org
+Description: Custom WordPress theme for the Broad Run Athletic Booster Club — a modern, photography-focused design in maroon and gold.
+Version: 1.0.0
+Requires at least: 6.0
+Tested up to: 6.7
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: broad-run-boosters
+Tags: custom-menu, featured-images, translation-ready, athletic, booster-club
+*/
+
+/* Main stylesheets are enqueued from assets/css/main.css via functions.php */
