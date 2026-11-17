@@ -37,12 +37,32 @@ $gallery_images = array(
 		'alt' => __( 'Spartan track and field', 'broad-run-boosters' ),
 	),
 );
+foreach ( $gallery_images as $i => $image ) {
+	$gallery_images[ $i ]['src'] = brab_img( $image['src'] );
+}
+
+// Photos chosen in Booster Site → Site Settings replace the built-in ones.
+$custom_gallery = brab_setting_gallery( 'gallery_images' );
+if ( $custom_gallery ) {
+	$gallery_images = $custom_gallery;
+	foreach ( $gallery_images as $i => $image ) {
+		if ( '' === $image['alt'] ) {
+			$gallery_images[ $i ]['alt'] = __( 'Broad Run Spartans in action', 'broad-run-boosters' );
+		}
+	}
+}
+
+$hero_id    = absint( brab_setting( 'hero_image' ) );
+$hero_image = $hero_id ? wp_get_attachment_image_url( $hero_id, 'full' ) : '';
+if ( ! $hero_image ) {
+	$hero_image = brab_img( 'hero.jpg' );
+}
 ?>
 
 <main id="main-content" class="site-main">
 
 	<!-- Hero -->
-	<section class="hero" style="--hero-image: url('<?php echo brab_img( 'hero.jpg' ); ?>');">
+	<section class="hero" style="--hero-image: url('<?php echo esc_url( $hero_image ); ?>');">
 		<div class="hero-overlay"></div>
 		<div class="hero-content">
 			<p class="hero-eyebrow"><?php esc_html_e( 'Student Athletes | Stronger Together', 'broad-run-boosters' ); ?></p>
@@ -183,7 +203,7 @@ $gallery_images = array(
 				<?php foreach ( $gallery_images as $image ) : ?>
 					<figure class="gallery-item">
 						<img
-							src="<?php echo brab_img( $image['src'] ); ?>"
+							src="<?php echo esc_url( $image['src'] ); ?>"
 							alt="<?php echo esc_attr( $image['alt'] ); ?>"
 							loading="lazy"
 							width="320"
@@ -206,11 +226,16 @@ $gallery_images = array(
 				</svg>
 			</div>
 			<div class="meeting-content">
-				<?php $meeting = brab_get_meeting_settings(); ?>
+				<?php $meeting = brab_get_next_meeting(); ?>
 				<p class="meeting-label"><?php esc_html_e( 'Next Booster Meeting', 'broad-run-boosters' ); ?></p>
-				<p class="meeting-date"><?php echo esc_html( $meeting['date'] ); ?></p>
-				<p class="meeting-meta"><?php echo esc_html( $meeting['time'] . ' | ' . $meeting['location'] ); ?></p>
-				<a class="btn btn-maroon" href="<?php echo esc_url( home_url( '/about-us/' ) ); ?>">
+				<?php if ( $meeting ) : ?>
+					<p class="meeting-date"><?php echo esc_html( $meeting['date'] ); ?></p>
+					<p class="meeting-meta"><?php echo esc_html( implode( ' | ', array_filter( array( $meeting['time'], $meeting['location'] ) ) ) ); ?></p>
+				<?php else : ?>
+					<p class="meeting-date"><?php esc_html_e( 'Date coming soon', 'broad-run-boosters' ); ?></p>
+					<p class="meeting-meta"><?php esc_html_e( 'Broad Run High School', 'broad-run-boosters' ); ?></p>
+				<?php endif; ?>
+				<a class="btn btn-maroon" href="<?php echo esc_url( home_url( '/about-us/#meetings' ) ); ?>">
 					<?php esc_html_e( 'View All Meeting Dates', 'broad-run-boosters' ); ?>
 					<span class="btn-arrow" aria-hidden="true">&rarr;</span>
 				</a>
@@ -221,10 +246,6 @@ $gallery_images = array(
 			<div class="involved-overlay"></div>
 			<div class="involved-content">
 				<h2 class="involved-title"><?php esc_html_e( 'Get Involved', 'broad-run-boosters' ); ?></h2>
-				<p class="involved-tags">
-					<?php esc_html_e( 'Concessions | Open Positions', 'broad-run-boosters' ); ?><br>
-					<?php esc_html_e( 'Fundraising | And More', 'broad-run-boosters' ); ?>
-				</p>
 				<a class="btn btn-gold" href="<?php echo esc_url( home_url( '/get-involved/' ) ); ?>">
 					<?php esc_html_e( 'Explore Volunteer Opportunities', 'broad-run-boosters' ); ?>
 					<span class="btn-arrow" aria-hidden="true">&rarr;</span>
@@ -244,33 +265,7 @@ $gallery_images = array(
 			<span class="sponsors-rule" aria-hidden="true"></span>
 		</header>
 
-		<?php
-		$sponsors_by_tier = brab_get_sponsors_for_display();
-		$tier_labels      = array(
-			'gold'   => __( 'Gold Sponsors', 'broad-run-boosters' ),
-			'silver' => __( 'Silver Sponsors', 'broad-run-boosters' ),
-			'bronze' => __( 'Bronze Sponsors', 'broad-run-boosters' ),
-		);
-		?>
-		<div class="sponsors-tiers">
-			<?php foreach ( $tier_labels as $tier_key => $tier_label ) : ?>
-				<?php $tier_sponsors = isset( $sponsors_by_tier[ $tier_key ] ) ? $sponsors_by_tier[ $tier_key ] : array(); ?>
-				<div class="sponsor-tier sponsor-tier-<?php echo esc_attr( $tier_key ); ?>">
-					<h3 class="sponsor-tier-label"><?php echo esc_html( $tier_label ); ?></h3>
-					<div class="sponsor-logos">
-						<?php if ( ! empty( $tier_sponsors ) ) : ?>
-							<?php foreach ( $tier_sponsors as $sponsor ) : ?>
-								<?php brab_render_sponsor_logo( $sponsor ); ?>
-							<?php endforeach; ?>
-						<?php else : ?>
-							<span class="sponsor-logo sponsor-logo--placeholder">
-								<span class="sponsor-logo-fallback"><?php echo esc_html( sprintf( /* translators: %s: tier name */ __( '%s placeholder', 'broad-run-boosters' ), $tier_label ) ); ?></span>
-							</span>
-						<?php endif; ?>
-					</div>
-				</div>
-			<?php endforeach; ?>
-		</div>
+		<?php get_template_part( 'template-parts/sponsor-tiers', null, array( 'all' => false ) ); ?>
 
 		<div class="sponsors-cta">
 			<a class="btn btn-outline-maroon" href="<?php echo esc_url( home_url( '/sponsorships/' ) ); ?>">

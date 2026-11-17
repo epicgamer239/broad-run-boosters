@@ -8,6 +8,7 @@
 		initMobileNav();
 		initAnnouncementBar();
 		initGallery();
+		initTeamDonate();
 	});
 
 	function initMobileNav() {
@@ -93,6 +94,32 @@
 
 		next.addEventListener('click', function () {
 			scrollByAmount(1);
+		});
+	}
+
+	function initTeamDonate() {
+		document.querySelectorAll('.team-donate').forEach(function (form) {
+			var select = form.querySelector('.team-donate-select');
+			var hint = form.querySelector('.team-donate-hint');
+			if (!select) {
+				return;
+			}
+
+			function update() {
+				var option = select.options[select.selectedIndex];
+				var dedicated = option && option.getAttribute('data-dedicated') === '1';
+				if (hint) {
+					hint.hidden = dedicated;
+				}
+			}
+
+			select.addEventListener('change', update);
+			update();
+
+			form.addEventListener('submit', function (event) {
+				event.preventDefault();
+				window.open(select.value, '_blank', 'noopener');
+			});
 		});
 	}
 })();
